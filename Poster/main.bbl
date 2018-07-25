@@ -1,0 +1,134 @@
+\begin{thebibliography}{10}
+
+\bibitem{Agrawal:1993:MAR:170036.170072}
+R.~Agrawal, T.~Imieli\'{n}ski, and A.~Swami.
+\newblock Mining association rules between sets of items in large databases.
+\newblock {\em SIGMOD Rec.}, 22(2):207--216, June 1993.
+
+\bibitem{DBLP:journals/ki/AuriolMG96}
+E.~Auriol, M.~Manago, and J.~Guiot{-}Dorel.
+\newblock Cassiop{\'{e}}e: Fehlerdiagnose von {CFM} 56-3 triebwerken f{\"{u}}r
+  boing 737 flugzeuge.
+\newblock {\em {KI}}, 10(1):47--53, 1996.
+
+\bibitem{Bordes:NIPS2013}
+A.~Bordes, N.~Usunier, A.~Garc{\'{\i}}a{-}Dur{\'{a}}n, J.~Weston, and
+  O.~Yakhnenko.
+\newblock {Translating Embeddings for Modeling Multi-relational Data}.
+\newblock In {\em Proceedings of NIPS}, pages 2787--2795, 2013.
+
+\bibitem{DBLP:conf/ruleml/FurnkranzK15}
+J.~F{\"{u}}rnkranz and T.~Kliegr.
+\newblock A brief overview of rule learning.
+\newblock In {\em RuleML}, pages 54--69, 2015.
+
+\bibitem{gad2016}
+M.~H. Gad-Elrab, D.~Stepanova, J.~Urbani, and G.~Weikum.
+\newblock Exception-enriched rule learning from knowledge graphs.
+\newblock In {\em Proceedings of ISWC}, pages 234--251, 2016.
+
+\bibitem{amie}
+L.~Galarraga, C.~Teflioudi, K.~Hose, and F.~M. Suchanek.
+\newblock Fast rule mining in ontological knowledge bases with {AMIE+}.
+\newblock {\em {VLDB} J.}, 24(6):707--730, 2015.
+
+\bibitem{iswc-18}
+V.~T. Ho, D.~Stepanova, M.~Gad-Elrab, E.~Kharlamov, and G.~Weikum.
+\newblock Rule learning from knowledge graphs guided by embedding models.
+\newblock In {\em ISWC}, 2018.
+
+\bibitem{DBLP:journals/kais/ImRW10}
+S.~Im, Z.~W. Ras, and H.~Wasyluk.
+\newblock Action rule discovery from incomplete data.
+\newblock {\em Knowl. Inf. Syst.}, 25(1):21--33, 2010.
+
+\bibitem{association-rule-mining-overview}
+S.~Kotsiantis and D.~Kanellopoulos.
+\newblock Association rules mining: A recent overview.
+\newblock {\em GESTS Int. Trans. on CS and Eng.}, 32(1):71--82, 2006.
+
+\bibitem{DBLP:conf/kdd/MannilaTV95}
+H.~Mannila, H.~Toivonen, and A.~I. Verkamo.
+\newblock Discovering frequent episodes in sequences.
+\newblock In {\em KDD-95}, 1995.
+
+\bibitem{NELL-aaai15}
+T.~Mitchell, W.~Cohen, E.~Hruschka, P.~Talukdar, J.~Betteridge, A.~Carlson,
+  B.~Dalvi, M.~Gardner, B.~Kisiel, J.~Krishnamurthy, N.~Lao, K.~Mazaitis,
+  T.~Mohamed, N.~Nakashole, E.~Platanios, A.~Ritter, M.~Samadi, B.~Settles,
+  R.~Wang, D.~Wijaya, A.~Gupta, X.~Chen, A.~Saparov, M.~Greaves, and
+  J.~Welling.
+\newblock {Never-Ending Learning}.
+\newblock In {\em AAAI}, 2015.
+
+\bibitem{DBLP:conf/aaai/NickelRP16}
+M.~Nickel, L.~Rosasco, and T.~A. Poggio.
+\newblock Holographic embeddings of knowledge graphs.
+\newblock In {\em AAAI}, 2016.
+
+\bibitem{conf/icml/NickelTK11}
+M.~Nickel, V.~Tresp, and H.-P. Kriegel.
+\newblock A three-way model for collective learning on multi-relational data.
+\newblock In {\em ICML}, 2011.
+
+\bibitem{DBLP:journals/semweb/Paulheim17}
+H.~Paulheim.
+\newblock Knowledge graph refinement: {A} survey of approaches and evaluation
+  methods.
+\newblock {\em Semantic Web}, 8(3):489--508, 2017.
+
+\bibitem{DBLP:books/mit/PF91/Piatetsky91}
+G.~Piatetsky{-}Shapiro.
+\newblock Discovery, analysis, and presentation of strong rules.
+\newblock In {\em Knowledge Discovery in Databases}, pages 229--248. {AAAI/MIT}
+  Press, 1991.
+
+\bibitem{DBLP:conf/pkdd/RasW00}
+Z.~W. Ras and A.~Wieczorkowska.
+\newblock Action-rules: How to increase profit of a company.
+\newblock In {\em PKDD}, 2000.
+
+\bibitem{yago}
+F.~M. Suchanek, G.~Kasneci, and G.~Weikum.
+\newblock {Yago: A Core of Semantic Knowledge}.
+\newblock In {\em Proceedings of WWW}, pages 697--706, 2007.
+
+\bibitem{trantowards}
+H.~D. Tran, D.~Stepanova, M.~H. Gad-elrab, F.~A. Lisi, and G.~Weikum.
+\newblock Towards nonmonotonic relational learning from knowledge graphs.
+\newblock {\em 26th ILP}, 2016.
+
+\bibitem{wikidata}
+D.~Vrandecic and M.~Kr{\"{o}}tzsch.
+\newblock Wikidata: a free collaborative knowledgebase.
+\newblock {\em {CACM}}, 57(10):78--85, 2014.
+
+\bibitem{DBLP:journals/tkde/WangMWG17}
+Q.~Wang, Z.~Mao, B.~Wang, and L.~Guo.
+\newblock Knowledge graph embedding: {A} survey of approaches and applications.
+\newblock {\em {IEEE} Trans. Knowl. Data Eng.}, 29(12):2724--2743, 2017.
+
+\bibitem{DBLP:journals/corr/WangL15i}
+Z.~Wang and J.~Li.
+\newblock {RDF2Rules}: Learning rules from {RDF} knowledge bases by mining
+  frequent predicate cycles.
+\newblock {\em CoRR}, abs/1512.07734, 2015.
+
+\bibitem{DBLP:conf/ijcai/WangL16}
+Z.~Wang and J.~Li.
+\newblock Text-enhanced representation learning for knowledge graph.
+\newblock In {\em {IJCAI}}, 2016.
+
+\bibitem{DBLP:series/isrl/Wojtusiak14}
+J.~Wojtusiak.
+\newblock Rule learning in healthcare and health services research.
+\newblock In {\em Machine Learning in Healthcare Informatics}, pages 131--145.
+  2014.
+
+\bibitem{DBLP:conf/aaai/0005HMZ17}
+H.~Xiao, M.~Huang, L.~Meng, and X.~Zhu.
+\newblock {SSP:} semantic space projection for knowledge graph embedding with
+  text descriptions.
+\newblock In {\em {AAAI}}, 2017.
+
+\end{thebibliography}

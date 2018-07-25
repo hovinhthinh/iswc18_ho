@@ -1,0 +1,248 @@
+%!TEX root = ../main.tex
+
+
+\section{Rule Learning Guided by External Sources}
+%---------------------------------------------------------%
+
+In this section, we first give some necessary preliminaries, 
+then introduce our framework for rule learning guided by external sources,
+discuss challenges associated with it, and finally propose a concrete instantiation of our framework with embedding models.
+
+\subsection{Background}
+%---------------------------------------------------------%
+
+We assume countable sets $\mathcal{R}$ of unary and binary relation names and $\mathcal{C}$  of constants. 
+A \emph{knowledge graph} (KG) $\G$ is a finite set of ground atoms $a$ of the form
+$p(b,c)$ and $c(b)$ over $\R\cup\C$.
+With $\Sigma_{\cG}$, the \emph{signature} of $\G$, we denote elements of $\R\cup\C$ that occur in $\G$.\looseness=-1
+
+
+We define rules over KGs following the standard approach of non-monotonic logic programs under the answer set semantics \cite{GL1988}.
+Let $\X$ be a countable set of variables.
+A \emph{rule} $r$ is 
+of the form
+$
+\mi{head \leftarrow body},
+$
+where $\mi{head}$, or $\mi{head}(r)$, is an atom 
+over $\R \cup \C \cup \X$ 
+and $body$, or $\mi{body}(r)$, is a conjunction of positive and negative atoms 
+over $\R\cup\C\cup\X$.
+Finally, 
+$\mi{body^+(r)}$ and $\mi{body^-(r)}$ denote the atoms that occur in $\mi{body(r)}$ positively and negatively respectively; that is, the rule can be written as
+$
+\mi{head(r) \leftarrow body^+(r), not\ body^-(r)}.
+$
+A rule is \emph{Horn}, if all head variables occur in the body,
+and $\mi{body^-(r)}$ is empty.
+
+
+We define \emph{execution} of rules with default negation~\cite{GL1988} over KGs in the standard way.
+More precisely, let $\G$ be a KG, $r$ a rule over $\Sigma_\G$, 
+and $a$ be an atom over $\Sigma_\G$.
+Then, $r \models_\G a$ holds if there is a variable assignment that maps atoms $\mi{body^+(r)}$ in $\G$ such that it does not map any of the atoms in $\mi{body^-(r)}$ in $\G$. 
+Then, let $\G_r = \G \cup \set{a \mid r \models_\G a}$. 
+Intuitively, $\G_r$ extends $\G$ with edges derived from $\G$ by applying $r$. \ds{Added a note on syntactic rule restrictions} Note that to avoid propagating uncertain predictions, given a set of rules $R$ we execute every rule in $R$ on $\cG$ independently, i.e., $\cG_R=\bigcup_{r\in R}\cG_r$. Given additional syntactic restrictions on rules in $R$, which disallow cycles through negation, consistency is ensured.
+
+\subsection{Problem Statement and Proposal of General Solution} 
+%---------------------------------------------------------%
+Let $\G$ be a KG over the signature $\Sigma_{\G}=(\cR_\G,\cC_\G)$. 
+A \emph{probabilistic KG} $\PG$ is a pair $\PG = (\G,f)$ 
+where $f:\cR_\G\times \cC_\G \times \cC_\G\rightarrow [0,1]$ is a probability function over the facts over $\Sigma_{\G}$. We assume $f(a) = 1$ for each fact $a \in \G$, which is already known to be true.
+
+The goal of our work is to learn rules that not only describe the available graph $\cG$ well, but also predict highly probable facts based on the function $f$.
+The key questions now are how to define the quality of a given rule $r$ based on $\PG$ and how to exploit this quality during rule learning for pruning out unpromising rules. 
+
+
+
+A quality measure $\mu$ for rules over probabilistic KGs 
+is a function $\mu: (r,\PG) \mapsto \alpha$, where $\alpha \in  [0,1]$.
+In order to measure the quality $\mu$ of $r$ over $\PG$ we propose: 
+\begin{itemize}
+\item to measure the quality $\mu_1$ of $r$ over $\G$, where $\mu_1: (r,\cG) \mapsto \alpha \in  [0,1]$,
+\item to measure the quality $\mu_2$ of $\G_r$ by relying on $\PG_r=(\cG_r,f)$, 
+where $\mu_2{:}\, (\G'{,}\, (\G,f)) \mapsto  \alpha \,{\in}\, [0,1]$ for $\G' \supseteq \G$ is the quality of extension $\G'$ of $\G$ over $\Sigma_\G$ given $f$, and 
+\item to combine the result as the weighted sum.
+\end{itemize}
+Formally, we define our hybrid rule quality function $\mu(r,\PG)$ as follows:
+\begin{align}\label{eq:hm}
+	\mu(r,\PG)= (1 - \lambda)\times \mu_1(r,\cG) + \lambda \times \mu_2(\G_r,\PG)
+\end{align}
+In this formula $\mu_1$ can be any classical quality measure of rules over the given KG $\cG$. Intuitively, $\mu_2(\G_r,\PG)$ is the quality of $\G_r$ wrt $f$ that allows us to capture the information about facts missing in $\G$ that are relevant for $r$.
+The weighting factor 
+$\lambda$, we call it \textit{embedding weight}, allows one to choose whether 
+to rely more on the classical measure $\mu_1$ or on the measure $\mu_2$ of the quality of the extension $\cG_r$ of $r$ over $\G$.
+\thi{from reviewer: f is obtained from the embedding, but this is only stated explicitly after a lot of text.}
+\subsubsection{Challenges.} 
+%---------------------------------------%
+There are several challenges that one faces when realising our approach.
+First, given an incomplete $\G$, one has to define $f$
+such that $(\G,f)$ satisfies the expectations, i.e., reflects well the probabilities of missing facts.
+Second, one has to define $\mu_1$ and $\mu_2$ that also satisfy the expectations and admit efficient implementation.
+%
+Finally, the adaptation of existing rule learning approaches to account for the probabilistic function $f$ without the loss of scalability is not trivial. 
+Indeed, materializing $f$ by augmenting $\cG$ with all possible probabilistic facts over $\Sigma_{\cG}$ and subsequently applying standard rule learning methods on the obtained graph is not practical. 
+Storing such potentially enormous augmented graph 
+where many probabilistic facts are irrelevant for the extraction of meaningful rules might be simply infeasible.\looseness=-1
+
+
+\subsection{Realization of General Solution}
+\label{section: realisation}
+%------------------------------------------------------------%
+We now 
+describe how we addressed the above stated challenges.
+In this section, 
+we present concrete realizations of $f$, $\mu_1$ and $\mu_2$, and in Section~\ref{sec:sys} we discuss how we implemented them and adapted within an 
+end-to-end rule learning system.
+
+
+\subsubsection{Realization of the probabilistic function $f$.}
+%------------------------------------------------------------%
+We propose to define $f$ by relying on embeddings of KGs.
+Embeddings are low-dimensional vector spaces that represent nodes and edges of KGs and can be used to estimate the likelihood
+(not necessary probability) of potentially missing binary atoms
+using a scoring function $\mi{\xi: \cR_{\cG} \times \cC_{\cG} \times \cC_{\cG}  \rightarrow {\rm I\!R}}$.
+Examples of concrete scoring functions can be found, e.g., in~\cite{DBLP:journals/tkde/WangMWG17}.
+Since embeddings per se 
+are not in the focus of our paper,
+we will not give further details on them and refer the reader to~\cite{DBLP:journals/tkde/WangMWG17} for an overview.
+Note that our framework is not dependent on a concrete embedding model. 
+What is important for us is that embeddings can be 
+used to construct probabilistic representations~\cite{DBLP:conf/aaai/NickelRP16} of atoms missing in KGs and we use this to define $f$.
+
+Consider an auxiliary definition. Given a KG $\G$, and an atom $a=p(s,o)$, the set $\G^s$ consists of $a$ and all atoms $a'$ that are obtained from $a$ by replacing $s$ with a constant from $\Sigma_\G$, except for those that are already in $\G$. 
+Then, given a scoring function $\xi$, $[\G^s]$ is a list of atoms from $\G^s$ ordered in the descending order.
+Finally, the \emph{subject rank}~\cite{DBLP:journals/corr/abs-1301-3485} of $a$ given $\xi$, $\mi{subject\_rank_\xi(a)}$ is the position of $a$ in $[\G^s]$. 
+Analogously,one can define $[\G^o]$ and the corresponding 
+\emph{object rank}~\cite{DBLP:journals/corr/abs-1301-3485} of $a$ given $\xi$, that is, $\mi{object\_rank_\xi(a)}$. 
+
+Now we are ready to define the function $f$ for an atom $a \notin \cG$
+as the average of its subject and object inverted ranks given $\xi$~\cite{DBLP:journals/corr/abs-1301-3485}, i.e.:
+\begin{align*}
+\mi{f_\xi(a)} = 0.5\times(1/\mi{subject\_rank_\xi(a)}+ 1/\mi{object\_rank_\xi(a)})
+\end{align*}
+Note that we assume $f_{\xi}(a) = 1$ for $a \in \cG$.
+
+\subsubsection{Realization of $\mu_1$.}
+%---------------------------------------------------%
+This measure should reflect the descriptive quality of a given rule $r$ with respect to $\cG$.
+There are many  classical data mining measures that can be used as $\mu_1$, see, e.g. \cite{DBLP:conf/eurogp/MinhdNT18,amie,carl,measureskg} for $\mu_1$s proposed specifically for KGs.
+
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,
+  thick,main node/.style={font=\bfseries}]
+
+  \node[main node] (1) {Brad};
+  \node[main node] (2) [right=2.5cm of 1] {Ann};
+  \node[main node] (3) [right=6.5cm of 1] {US};
+  \node[main node] (5) [right=8.5cm of 1] {Kate};  
+  \node[main node] (6) [below right =0.9cm and 0.75cm of 1] {France};
+  \node[main node] (4) [right=5cm of 6] {John};  
+  \node[main node] (7) [right=2.25cm of 6] {ISys};
+
+  \node[main node] (10) [below left=0.9cm and 0.5cm of 6] {Bob};  
+    \node[main node] (9) [right=8cm of 10] {Berlin};  
+  \node[main node] (11) [right=2.25cm of 10] {Alice};  
+  \node[main node] (8) [right=2cm of 11] {Germany};  
+  
+  \path[every node/.style={color=teal,fill=white,font=\small}]
+    (2) edge node [right=-20pt] {\textit{marriedTo}} (1)
+    (5) edge node [right=-24pt] {\textit{marriedTo}} (4)
+    (10) edge node [right=-23pt] {\textit{marriedTo}} (11)    
+    (1) edge node [right=-17pt] {\textit{livesIn}} (6)
+    (2) edge node [right=-17pt] {\textit{livesIn}} (6)
+    (5) edge node [right=-17pt] {\textit{livesIn}} (9)
+    (4) edge node [right=-17pt] {\textit{livesIn}} (8)
+    (11) edge node [right=-17pt] {\textit{livesIn}} (8)
+    (10) edge node [right=-17pt] {\textit{livesIn}} (6)
+    (2) edge node [right=-20pt] {\textit{worksFor}} (7)
+    (4) edge node [right=-17pt] {\textit{worksFor}} (7)
+    (11) edge node [right=-25pt] {\textit{worksFor}} (7)
+    (7) edge node [right=-20pt] {\textit{hasOfficeIn}} (6)
+    (7) edge node [right=-25pt] {\textit{hasOfficeIn}} (8)
+    (7) edge node [right=-38pt] {\textit{hasHeadQuatersIn}} (3);
+\end{tikzpicture}
+\caption{An example knowledge graph.}
+\label{fig:kg}
+\end{figure}
+
+In this work, we selected the following two measures for $\mu_1$:
+\emph{confidence} and \emph{PCA confidence} \cite{amie}, where PCA stands for the partial completeness assumption,
+that can be defined using 
+rule support, \emph{r-supp}, 
+body support, \emph{b-supp}, and
+partial body support, \emph{pb-supp}, as follows.
+Let $\mi{r:\; head\leftarrow body^+, not\;  body^-}$ be a rule, $x$ be the subject variable of the $\mi{head}$, 
+and let $h$ denote a $\mi{head}$'s variable assignment that we with a slight abuse of notation
+use as a homomorphism on (sets of) atoms.
+Then, 
+\begin{align*}
+	\textit{r-supp}(r,\cG) & =
+		|\set{h \mid 
+				h(head) \in \G, 
+				\exists h'\supseteq h \text{ s.t. } 
+				h'(body^+) \in \G, 
+ 				h'(body^-) \not \in \cG}|,\\
+	\textit{b-supp}(r,\cG) & =
+		|\set{h \mid
+				\exists h'\supseteq h \text{ s.t. } 
+				h'(body^+) \in \G, 
+ 				h'(body^-) \not \in \cG}|,\\
+	\textit{pb-supp}(r,\cG) & = 
+		|\set{h \mid
+				\exists h'\supseteq h \text{ s.t. } 
+				h'(body^+) \in \G, 
+ 				h'(body^-) \not \in \cG, \text{and}\\
+&\quad\quad\quad\;\; \exists h'' \text{ s.t. } h(x)= h''(x),
+				h''(head) \in \G}|.
+\end{align*}
+Finally, we are ready to define $\mu_1$ as confidence or PCA confidence:
+\begin{align*}
+\mu_1 = \mi{conf}(r,\cG) & = \textit{r-supp}(r,\cG)/\textit{b-supp}(r,\cG),\\
+\mu_{1,pca} = \mi{conf_{pca}}(r,\cG) & = \textit{r-supp}(r,\cG)/\textit{pb-supp}(r,\cG).
+\end{align*}
+
+
+Intuitively, confidence of a rule is the conditional probability of rule's head given its body, while PCA confidence is its generalisation to the open world assumption (OWA), which does not penalize rules that predict facts $p(s,o)$, such that $p(s,o')\not \in \cG$ for any $o'$.
+
+
+
+\begin{example}\label{ex:m}
+Consider the KG $\cG$ in Figure \ref{fig:kg} and recall the rules $r_1$ and $r_2$ from Equations~\eqref{eq:ex-rule-1}-\eqref{eq:ex-rule-2}.
+For $r_1$, we have $\mi{conf(r_1,\cG)=conf_{pca}(r_1,\cG)=} \frac{3}{6}$, while
+for $r_2$ it holds that  $\mi{conf(r_2,\cG)}=\mi{conf_{pca}(r_2,\cG)}=\frac{1}{3}$. If Alice was not known to live in Germany, then $\mi{conf_{pca}(r_2,\cG \setminus \{livesIn(Alice, Germany)\})}=\frac{1}{2}$. 
+Finally, for the following rule with negation:
+\[\mi{r_4:\,livesIn(Y,Z) \leftarrow marriedTo(X,Y), livesIn(X,Z), not\;researcher(X)}
+\]
+stating that married people live together unless one is a researcher, 
+and $\cG'=\cG\cup\{\mi{researcher(bob)}\}$, we have $\mi{conf(r_4,\cG')=conf_{pca}(r_4,\cG')=\frac{1}{2}}$.\qed
+\end{example}
+
+\subsubsection{Realization of $\mu_2$.}
+%---------------------------------------------------%
+There are various ways how one can define the quality $\mu_2(\G_r,\PG)$ of $\G_r$.
+A natural candidate to define the quality of $\G_r$ is the probability of $\G_r$, that is, as
+$\mu_2(\G_r,\PG)=\prod_{a \in \G_r} f(a) \times \prod_{a \in (\R_\G\times\C_\G\times\C_\G)\setminus \G_r} (1-f(a))$.
+A disadvantage of such quality measure is that in practice it will be very low,
+as the product of many (potentially) small probabilities,
+and thus Equation~\ref{eq:hm} will be heavily dominated by $\mu_1(r,\cG)$. Therefore,
+we advocate 
+to define $\mu_2(\G_r,\PG)$ as 
+the average probability of predicted facts in $\G_r$:
+\begin{align*}
+	\mu_2(\G_r,\PG) = (\Sigma_{a\in \cG_r\backslash \cG} f(a)) /
+				|\cG_r \backslash \cG|.
+\end{align*}
+
+\begin{example}\label{ex:hm}
+Consider the KG $\cG$ in Figure~\ref{fig:kg}, and the rules from Equations~\eqref{eq:ex-rule-1}-\eqref{eq:ex-rule-2} with their confidence values as presented in Example~\ref{ex:m}. Suppose that a text-enhanced embedding model produced a relatively accurate estimation of the probabilities of facts over $\mi{livesIn}$ relation. For example, even though there is no direct connection between Germany and Berlin within the graph, relying on the living places of entities similar to John and hidden semantic relations between Germany and Berlin such as co-occurrences in text and other linguistic features, for the fact $\mi{a=livesIn(john,berlin)}$ we obtained $f(a)=0.9$, while for $a'=\mi{livesIn(john,france)}$, a much lower probability $f(a')=0.09$. These naturally support the predictions of $r_2$ but not those of $r_1$.
+
+Generalising this idea, assume that on the whole dataset we get $\mi{\mu_2(\cG_{r_1},\PG)}=0.1$ and $\mi{\mu_2(\cG_{r_2},\PG)=0.8}$, where $\PG=(\cG,f)$. Thus, for $\lambda=0.5$ we have $\mu(r_1,\PG)=(1-0.5)\times 0.5+0.5\times 0.1 = 0.3$, while for $\mu(r_2,\PG)=(1-0.5) \times \frac{1}{3}+0.5\times 0.8\approx 0.57$, resulting in the desired ranking of $r_2$ over $r_1$ based on $\mu$.
+\qed 
+\end{example}
+
+
+
+

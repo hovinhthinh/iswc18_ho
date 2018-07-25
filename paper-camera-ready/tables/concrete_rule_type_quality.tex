@@ -1,0 +1,22 @@
+\begin{table}[t]
+\scriptsize
+%\tiny
+\centering
+\begin{tabular}{c |r r r r |r r r r} 
+ \multirow{3}{*}{\textbf{\textit{top-k}}} & \multicolumn{4}{c}{\textbf{FB15K}} & \multicolumn{4}{|c}{\textbf{Wiki44K}} \\
+ \cmidrule{2-9}
+ & \textbf{{~~}Conf}&  \textbf{{~~~~~~~~}PCA} & \textbf{Conf-HolE}& \textbf{Conf-SSP} &  \textbf{{~~}Conf}&  \textbf{{~~~~~~~~}PCA} & \textbf{Conf-TransE}& \textbf{Conf-SSP}\\
+  & {\scriptsize($\lambda=0$)}  & {\scriptsize($\lambda=0$)} & {\scriptsize($\lambda=0.3$)} & {\scriptsize($\lambda=0.3$)} & {\scriptsize($\lambda=0$)} & {\scriptsize($\lambda=0$)} &{\scriptsize($\lambda=0.3$)} & {\scriptsize($\lambda=0.3$)}\\
+ \midrule
+ \textbf{5} & 0.800 & 0.638 & \textbf{1.000} & \textbf{1.000} & 0.800 & 0.402 & \textbf{0.995} & 0.968\\
+\textbf{10} & 0.900 & 0.506 & \textbf{1.000} & \textbf{1.000} & 0.638 & 0.321 & 0.863 & \textbf{0.932} \\
+\textbf{20} & 0.900 & 0.499 & 0.950 & \textbf{1.000} & 0.712 & 0.357 & 0.802 & \textbf{0.825}\\
+\textbf{50} & 0.881 & 0.410 & 0.936 & \textbf{0.937} & 0.670 & 0.352 & \textbf{0.675} & 0.674 \\
+\textbf{100} & 0.855 & 0.348 & 0.885 & \textbf{0.895} & \textbf{0.477} & 0.331 & 0.474 & 0.474\\
+\textbf{200} & 0.842 & 0.355 & 0.870 & \textbf{0.875} & -- & -- & -- & -- \\
+ \bottomrule
+\end{tabular}
+\caption{$pred\_prec_{CW}$ of the \textit{top-k} rules learned using different measures.}
+\label{table:avg_quality}
+\vspace*{-3mm}
+\end{table}

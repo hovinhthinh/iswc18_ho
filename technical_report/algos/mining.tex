@@ -1,0 +1,31 @@
+\begin{algorithm}[thb]
+\footnotesize
+\DontPrintSemicolon
+$queue\leftarrow \langle[]\rangle$\\
+Execute in parallel:\\
+\While{$\neg$queue.isEmpty()}{    
+    \textit{rule $\leftarrow$ queue.dequeue()}\\
+    \tcc{Computes rule statistics and output if necessary.}
+    \If{rule.isClosed()}{
+        \textit{stats $\leftarrow$ computeStatistics(rule)}\\
+        \eIf{stats.isEligibleForOutput()}{
+            output($rule$)
+        }{
+            continue while loop
+        }
+    }
+    \tcc{Applies operators to explore more new rules.}
+    \ForEach{operator o}{
+        \ForEach{newRule $\in$ o(rule)}{
+            \If{newRule.hasGoodFormat()}{
+                \tcc{Check whether there exists some version of the rule in queue.}
+                \If{newRule $\notin$ queue}{ 
+                    \textit{queue.enqueue(newRule)}
+                }
+            }
+        }
+    }    
+}
+\caption{(Non-)monotonic Rule Mining}
+\label{algor:mining}
+\end{algorithm}

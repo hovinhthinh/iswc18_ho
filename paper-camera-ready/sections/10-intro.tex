@@ -1,0 +1,160 @@
+%!TEX root = ../main.tex
+
+\section{Introduction}\label{sec:intro}
+
+\subsubsection{Motivation.}
+Rules are widely used to 
+represent relationships and dependencies between data items in datasets
+and to capture the underlying patterns in data%
+~\cite{Agrawal:1993:MAR:170036.170072,DBLP:books/mit/PF91/Piatetsky91}.
+Applications of rules 
+include health-care~\cite{DBLP:series/isrl/Wojtusiak14}, 
+equipment diagnostics~\cite{DBLP:conf/cikm/KharlamovSXPMRH17,DBLP:conf/semweb/MehdiKSXKBHRR17},
+telecommunications~\cite{DBLP:conf/kdd/MannilaTV95}, 
+and commerce~\cite{DBLP:conf/pkdd/RasW00}.To facilitate rule construction, a variety of
+rule learning methods have been developed,
+see e.g.~\cite{DBLP:conf/ruleml/FurnkranzK15,association-rule-mining-overview} for an overview.
+Moreover, various statistical measures such as confidence,
+actionability, and unexpectedness to evaluate the quality of the learned rules have been proposed. 
+
+Rule learning has recently been adapted to the setting of
+ Knowledge Graphs (KGs)~\cite{amie,DBLP:journals/corr/WangL15i,gad2016,trantowards}
+where data is represented as a graph of entities interconnected via relations and labeled with classes, or more formally as a set of grounded binary and unary atoms typically referred to as facts.
+Examples of large-scale KGs include 
+Wikidata~\cite{wikidata}, 
+Yago~\cite{yago}, 
+NELL~\cite{NELL-aaai15},
+ and Google's KG. 
+Since many KGs are constructed from semi-structured knowledge, such
+as Wikipedia, or harvested from the Web with a combination of statistical and linguistic methods, they are inherently incomplete~\cite{amie}. 
+
+Rules over KGs are of the form $\mi{head \leftarrow body}$,
+where $\mi{head}$ is a binary atom and 
+$\mi{body}$ is a conjunction of, possibly negated, binary or unary atoms.
+When rules are automatically learned, statistical measures like
+support and confidence are used to assess the quality of rules.
+Most notably, the confidence of a rule is the fraction of
+facts predicted by the rule that are indeed true in the KG.
+However, this is a meaningful measure for rule quality only
+when the KG is reasonably complete.
+For rules learned from largely incomplete KGs, confidence and
+other measures may be misleading, as they do not reflect
+the patterns in the missing facts.
+For example, a KG that knows only (or mostly) male CEOs
+would yield a heavily biased rule 
+$\mi{gender(X,male) \leftarrow isCEO(X,Y), isCompany(Y)}$, 
+which does not
+extend to the entirety of valid facts beyond the KG.
+Therefore, it is crucial that rules can be ranked by a meaningful
+quality measure, 
+which accounts for 
+KG incompleteness. 
+
+
+%
+\subsubsection{Example.}
+Consider a KG about people's jobs, residence and
+spouses as well as office locations and headquarters of companies.
+Suppose a rule learning method has computed the following two rules:
+{\small
+\begin{align}
+	\label{eq:ex-rule-1}
+\mi{r_1 :\ }& \mi{livesIn(X,Y) \leftarrow worksFor(X,Z), hasOfficeIn(Z,Y)}\\[-.5ex]
+	\label{eq:ex-rule-2}
+\mi{r_2 :\ }& \mi{ livesIn(Y,Z) \leftarrow marriedTo(X,Y), livesIn(X,Z)}
+\end{align}}
+The rule $r_1$ is quite noisy, as companies have offices in many cities, 
+but employees live and work in only one of them, while
+the rule $r_2$ clearly is of higher quality. 
+However, depending on how the KG is populated with instances,
+the rule $r_1$ could nevertheless score higher than $r_2$ in terms of confidence
+measures. 
+For example, the KG may contain only a specific subset of company offices
+and only people who work for specific companies. 
+If we knew the complete KG, then the rule $r_2$
+should presumably be ranked higher than $r_1$.
+
+Suppose we had a perfect oracle for the true and complete KG. Then
+we could learn even more sophisticated rules such as:
+ {\small
+ \begin{align*}
+\mi{r_3 :\ } &\mi{livesIn(X,Y) \leftarrow worksFor(X,Z), hasHeadquarterIn(Z,Y), \mi{not}\, locatedIn(Y,USA)}
+\end{align*}}
+This rule would capture that most people work in the same city
+as their employers' headquarters, with the USA being an exception
+(assuming that people there are used to long commutes).
+This is an example of a rule that contains a negated atom in
+the rule body (so it is no longer a Horn rule) and has a partially
+grounded atom with a variable and a constant as its arguments.
+
+
+
+\subsubsection{Problem.}
+The problem of  KG incompleteness has been tackled by methods that
+(learn to) predict missing facts for KGs 
+(or actually missing relational edges between
+existing entities).
+A prominent class of approaches is statistics-based and includes
+tensor factorization, e.g.~\cite{conf/icml/NickelTK11} and neural-embedding-based models, e.g.~\cite{Bordes:NIPS2013,DBLP:conf/aaai/NickelRP16}.
+Intuitively, these approaches turn a KG, possibly augmented with
+external sources such as 
+text
+~\cite{DBLP:conf/aaai/0005HMZ17}
+or log files~\cite{Ringsquandl-2018-eswc}, 
+into a probabilistic representation
+of its entities and relations,
+known as \emph{embeddings}, 
+and then predict the likelihood of  
+missing facts by reasoning over the embeddings
+(see, e.g.~\cite{DBLP:journals/tkde/WangMWG17} for a survey).\looseness=-1 
+
+These kinds of embeddings can complement the given KG and are a potential asset
+in overcoming the limitations that arise from incomplete KGs.
+Consider the following gedankenexperiment:
+we compute embeddings from the KG and external text sources,
+that can then be used to predict the complete KG that comprises all valid facts.
+This would seemingly be the perfect starting point for learning rules,
+without the bias and quality problems of the incomplete KG.
+However, this scenario is way oversimplified.
+The embedding-based fact predictions would themselves be very noisy,
+yielding also many spurious facts.
+Moreover, the computation of all fact predictions and the induction of all
+possible rules would come with a big scalability challenge: in practice,
+we need to restrict ourselves to computing merely 
+small subsets of likely fact predictions
+and promising rule candidates.
+
+
+
+
+\subsubsection{Approach.}
+In this work we propose a novel approach for rule learning guided by external sources
+that allows to learn high-quality rules from incomplete KGs.
+In particular, our method extends rule learning
+by exploiting probabilistic representations of missing facts 
+computed by embedding models of KGs and possibly other external information sources. 
+We iteratively construct rules over a KG 
+and collect feedback from a precomputed embedding model, 
+through specific queries issued to the model 
+for assessing the quality of (partially constructed) rule candidates. 
+This way, the rule induction loop is interleaved with the guidance from the embeddings,
+and we avoid scalability problems.
+Our machinery is also more expressive than many prior works on rule learning from KGs,
+by allowing non-monotonic rules with negated atoms as well as partially grounded atoms. 
+Within this framework, we devise confidence measures that capture rule quality
+better than previous techniques and thus improve the ranking of rules.
+
+While enhancing embeddings with precomputed rules or constraints has been studied in several works~\cite{Wang2015KnowledgeBC,DBLP:journals/corr/abs-1711-11231,DBLP:conf/sigir/RastogiPD17,DBLP:conf/emnlp/GuoWWWG16,Wang2015KnowledgeBC}, accounting for embeddings in rule construction as we propose, has not been considered before to the best of our knowledge.
+
+\subsubsection{Contribution.}
+The salient contributions of our work are as follows:
+\begin{itemize}
+\item We propose a rule learning approach  guided by external sources, and show how to
+learn high-quality rules by utilizing feedback from embedding models.
+  \item We implement our approach and present extensive experiments on real-world KGs,
+demonstrating the effectiveness of our approach with respect to both 
+the quality of the learned rules and the fact predictions that they produce.
+\item Our code and data are made available to the research community at\\
+\url{https://github.com/hovinhthinh/RuLES}
+\end{itemize}
+

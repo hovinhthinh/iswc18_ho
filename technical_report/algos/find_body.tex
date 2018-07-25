@@ -1,0 +1,39 @@
+\begin{algorithm}[H]
+\footnotesize
+\DontPrintSemicolon
+
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Output}
+\SetKwProg{Fn}{Function}{}{}
+\Input{Rule body $[B_1, B_2, ..., B_n]$ with head variables $(s,o)$}
+\Output{Instances of ${(s,o)}$}
+
+\textit{instances $\leftarrow \{\}$}\\
+\textit{value $\leftarrow$ array of null values}\\
+\Fn{FillAtom(bodyAtomIndex)}{
+\If{bodyAtomIndex = n + 1}{
+    $instances \leftarrow instances \cup \{(value[s], value[o])\}$\\
+    return
+}
+$atom \leftarrow B_{bodyAtomIndex}$\\
+$null\_atom\_variables \leftarrow \{atom\ variable\ v\ |\ value[v]\ is\ null\}$\\
+\eIf{null\_atom\_variables is empty}{
+    \eIf{current variables value satisfy atom}{
+        \textit{FillAtom(bodyAtomIndex + 1)}
+    }{
+        return
+    }
+}{
+    \ForEach{values of null\_atom\_variables that satisfies $[B_1, B_2, ..., B_{bodyAtomIndex}]$}{
+        $value[null\_atom\_variables] \leftarrow assigned\ values$\\
+        \textit{FillAtom(bodyAtomIndex + 1)}
+    }
+    $value[null\_atom\_variables] \leftarrow null$
+}
+}
+\textit{FillAtom(1)}\\
+return $instances$
+
+\caption{Find Body Instances}
+\label{algor:stats}
+\end{algorithm}

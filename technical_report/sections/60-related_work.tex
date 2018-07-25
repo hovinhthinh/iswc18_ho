@@ -1,0 +1,46 @@
+%!TEX root = ../main.tex
+
+\section{Related Work}
+\label{sec:related-work}
+
+
+Inductive Logic Programming (ILP)
+addresses the problem of rule learning from 
+data.
+In its probabilistic setting, given a set of probabilistic examples for grounded atoms
+and a target predicate $p$,
+the task is to learn rules for predicting probabilities of 
+atoms for $p$~\cite{probfoil,DBLP:conf/ijcai/RaedtDTBV15,DBLP:conf/clima/CorapiSIR11}.  
+which quickly grows to sizes that ILP methods cannot handle.
+
+A recently proposed differentiable ILP framework \cite{DBLP:journals/jair/EvansG18} has advantages over traditional ILP in its robustness to noise and errors in the underlying data. 
+However, \cite{DBLP:journals/jair/EvansG18} requires negative examples, which in our case are hard to 
+get due to the large KG size. Moreover, \cite{DBLP:journals/jair/EvansG18} is memory-expensive
+as authors admit, 
+and
+cannot scale to the size of modern KGs.
+
+Unsupervised relational 
+association rule learning systems such as~\cite{DBLP:conf/esf/GoethalsB02,amie} 
+induce
+logical rules from the data by mining frequent patterns and casting them into rules. 
+In the context of KGs~\cite{amie,Chen:2016:OP:2882903.2882954,trantowards} 
+such approaches 
+address the incompleteness of KGs by exploiting sophisticated measures over the original graph, possibly enhanced with a schema \cite{d2016ontology} 
+ or constraints on the number of missing edges \cite{carl}.
+However, these methods do not tap any unstructured information like we do. 
+Indeed, our hybrid embedding-based measure allows us to conveniently account for  unstructured information implicitly via embeddings as well as making use of various graph-based rule metrics.
+
+Exploiting 
+embedding models for rule learning is a new research direction that has recently gained attention \cite{DBLP:conf/nips/YangYC17,DBLP:journals/corr/YangYHGD14a}. To the best of our knowledge, existing methods are purely statistics-based, i.e., they reduce the rule learning problem to algebraic operations on neural-embedding-based representations of a  given KG. The work \cite{DBLP:journals/corr/YangYHGD14a} constructs rules by modeling relation composition as multiplication or addition of two relation embeddings. The authors of \cite{DBLP:conf/nips/YangYC17} propose a differentiable system for learning models defined by sets of first-order rules that exploits a connection between inference and sparse matrix multiplication \cite{DBLP:journals/corr/Cohen16b}. However, existing approaches pose strong restrictions on target rule patterns, which often prohibit learning interesting rules, e.g. non-chain-like or exception-aware ones, which we support.
+
+
+Another line of work concerns enhancing embedding models with 
+rules and constraints, 
+e.g.~\cite{DBLP:conf/emnlp/GuoWWWG16,DBLP:journals/corr/abs-1711-11231,DBLP:conf/sigir/RastogiPD17,Wang2015KnowledgeBC}. While our direction is related, we pursue a different goal of 
+leveraging
+the feedback from embeddings to improve the quality of the learned rules. 
+To the best of our knowledge, this idea has not been considered 
+in any prior work.
+
+

@@ -1,0 +1,47 @@
+% latex if conditions
+\newif\ifdraft\drafttrue
+\newif\ifreviewChanges\reviewChangestrue
+\newif\ifinlineref\inlinereffalse
+\newif\iffinal\finalfalse
+\newif\ifextended\extendedfalse
+\newif\ifdotikz\dotikzfalse
+\newif\ifmakeallproofsinline\makeallproofsinlinefalse
+
+
+%set flags
+\draftfalse
+%\finalfalse
+\reviewChangesfalse
+
+\usepackage{soul}
+
+\ifdraft
+%\ifreviewChanges
+%\newcommand{\comment}[1]{{\textcolor{blue}{*** #1 ***}}}
+\newcommand{\thi}[1]{{\textcolor{red}{ *TH: #1 * }}}
+\newcommand{\gad}[1]{{\textcolor{blue}{ *G: #1 * }}}
+\newcommand{\ds}[1]{{\textbf{\textcolor{olivegreen}{ *D: #1 * }}}}
+\newcommand{\evgeny}[1]{\textbf{\color{red}*Evgeny: #1 *}}
+
+
+\else
+\newcommand{\thi}[1]{}
+\newcommand{\gad}[1]{}
+\newcommand{\ds}[1]{}
+\newcommand{\evgeny}[1]{}
+
+
+\fi
+
+%Defined by Gad
+\ifreviewChanges
+\newcommand{\dl}[1]{{\color{darkred}\st{ #1}}}
+\newcommand{\add}[1]{{\color{olivegreen} #1}}
+\else
+\newcommand{\dl}[1]{}
+\newcommand{\add}[1]{#1}
+\fi
+
+
+
+\newcommand{\missing}[1]{{\color{red}\textit{#1?}}}
