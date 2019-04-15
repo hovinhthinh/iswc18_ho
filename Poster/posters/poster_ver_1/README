@@ -1,0 +1,122 @@
+- README for INFOSYS poster template $Id: README 7625 2011-04-10 17:28:19Z tkren $ -*- org -*-
+
+This README provides some information for the LaTeX templates for
+INFOSYS posters of the Faculty of Informatics, Vienna University of
+Technology. You should be able to compile the files using pdflatex
+(sorry, plain latex is not supported and will never be).
+
+This template uses the beamer document class and beamerposter package, see
+<http://www.ctan.org/tex-archive/macros/latex/contrib/beamer/> and
+<http://www.ctan.org/tex-archive/macros/latex/contrib/beamerposter/>
+for a comprehensive manual. The webpage at
+<http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php>
+provides additional information and example posters, the group
+<http://groups.google.com/group/beamerposter> provides help.
+
+If you find any errors or bugs, or if you have suggestions, please
+drop me an email: Thomas Krennwallner <tkren@kr.tuwien.ac.at>.
+
+
+The templates are in the isposter.zip file. It contains the following files:
+
+infosys-poster-sample*.tex                           ... example portrait poster
+infosys-poster-sample-landscape*.tex                 ... example landscape poster
+TUINFPST.sty                                         ... TUINFPST package, contains some page settings
+beamerposter.sty                                     ... the newest beamerposter package 
+beamerthemeinfosys.sty                               ... the INFOSYS beamer color styles, basic setup
+beamertheme{dbai,forsyte,kbs}.sty                    ... the beamer color styles for DBAI, FORSYTE, and KBS
+beamertheme{dbaibright,forsytebright,kbsbright}.sty  ... the bright beamer color styles for DBAI, FORSYTE, and KBS
+figures/*                                            ... PDF figures for group and sponsor logos
+
+
+* Poster Setup
+
+The information for the poster header and footer must be configured
+using the following set of macros:
+
+% load your theme for the beamer poster:
+%  available themes: dbai, dbaibright, forsyte, forsytebright, kbs, kbsbright
+\mode<presentation>{\usetheme{kbs}}
+
+% RIGHT TOP (CONFERENCE) and RIGHT CENTER (TITLE)
+\title[CONFERENCE]{TITLE}
+
+% RIGHT BOTTOM
+\author{AUTHORS \\ EMAIL}
+
+% the place for logos, put here your own code
+\titlegraphic{%
+  \centering
+  \includegraphics[width=150mm]{INF_Logo_typo_grau}
+
+  \vspace{2cm}
+
+  \includegraphics[height=80mm]{logo_KBS_5_CMYK}%
+}
+
+% it's sponsor time, put here your own code
+\logo{
+  \begin{minipage}[c][3.5cm]{\textwidth}
+    \hspace{5mm}
+    \includegraphics[height=3cm]{LOGO-ERC}
+    \hfill
+    \includegraphics[height=3cm]{flag_2colors}
+    \hfill
+    \includegraphics[height=3cm]{ffglogomaster}
+    \hfill
+    \includegraphics[height=3cm]{FP7-gen-CMYK}
+    \hfill
+    \includegraphics[height=3cm]{FP7-ide-CMYK}
+    \hfill
+    \includegraphics[height=3cm]{FP7-peo-CMYK}
+    \hfill
+    \includegraphics[height=3cm]{fwf-logo_vektor_var2}
+    \hfill
+    \includegraphics[height=3cm]{marie-curie-actions_CMYK}
+    \hfill
+    \includegraphics[height=3cm]{WWTF_Logo_mac}
+    \hspace{5mm}
+  \end{minipage}
+}
+
+
+* The next items just give some general information about poster creation:
+
+- Convert your graphics into CMYK color model
+
+Beware that poster plotters use the CMYK color model
+<http://en.wikipedia.org/wiki/CMYK_color_model>, this means that your
+color graphics may look differently on your RGB-based computer screen
+compared to the print-out. You can avoid surprises by converting your
+images from RGB to CMYK before you compile them into one A0
+poster. The ghostscript package may help:
+
+$ gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "-sOutputFile=image_cmyk.pdf" -dProcessColorModel=/DeviceCMYK -f image.pdf
+
+converts image.pdf to the CMYK-based image_cmyk.pdf.
+
+
+- Embed your fonts
+
+You cannot be sure that your print shop has all possible fonts
+installed, this is why its best to embed all used fonts. Again,
+ghostscript comes to the rescue:
+
+$ gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress "-sOutputFile=file_embed.pdf" file.pdf
+
+You can check that all fonts are embedded with pdffonts:
+
+$ pdffonts myposter.pdf
+name                                 type              emb sub uni object ID
+------------------------------------ ----------------- --- --- --- ---------
+KODEWA+NimbusSanL-Regu               Type 1            yes yes no      16  0
+OMQHKW+NimbusSanL-Bold               Type 1            yes yes no      17  0
+OMQHKW+NimbusSanL-Bold               Type 1            yes yes no      30  0
+
+The "emb" column should have all entries set to "yes".
+
+
+
+# Local Variables:
+# mode: org
+# End:

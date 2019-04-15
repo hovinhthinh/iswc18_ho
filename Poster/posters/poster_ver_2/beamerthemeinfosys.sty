@@ -1,0 +1,174 @@
+% $Id: beamerthemeinfosys.sty 7631 2011-04-13 18:58:36Z tkren $
+%
+% TU Wien - Faculty of Informatics - Institute of Information Systems
+% poster template
+%
+% This template is using the beamer document class and beamerposter package, see
+% <http://www.ctan.org/tex-archive/macros/latex/contrib/beamer/>
+% <http://www.ctan.org/tex-archive/macros/latex/contrib/beamerposter/>
+% <http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php>
+%
+% For questions and comments send an email to
+% Thomas Krennwallner <tkren@kr.tuwien.ac.at>
+%
+% based on beamerthemerDreuw.sty created by Philippe Dreuw and Thomas Deselaers
+%
+\ProvidesPackage{beamerthemeinfosys}[2011/04/08 v1.0 INFOSYS Poster beamer theme]
+\typeout{2011/04/08 v1.0 INFOSYS Poster beamer theme}
+
+%
+% options
+%
+
+\newif\ifinfosys@landscape\infosys@landscapefalse
+
+% for landscape poster
+\DeclareOption{landscape}{\infosys@landscapetrue}
+
+\ProcessOptions
+
+\mode<presentation>
+
+%
+% header
+%
+
+\newlength{\infosys@headsep}
+\newlength{\infosys@headwidth}
+\newlength{\infosys@headheight}
+\newlength{\infosys@leftheadwidth}
+\newlength{\infosys@rightheadwidth}
+\newlength{\infosys@righttopheight}
+\newlength{\infosys@rightcenterheight}
+\newlength{\infosys@rightbottomheight}
+\newlength{\infosys@bordersep}
+
+\ifinfosys@landscape % landscape
+\setlength{\infosys@headwidth}{1169mm}
+\setlength{\infosys@leftheadwidth}{300mm}
+\setlength{\infosys@rightheadwidth}{860mm}
+\setlength{\infosys@headheight}{130mm}
+\setlength{\infosys@rightcenterheight}{60mm}
+\setlength{\infosys@rightbottomheight}{30mm}
+\else % portrait
+\setlength{\infosys@headwidth}{819mm}
+\setlength{\infosys@leftheadwidth}{200mm}
+\setlength{\infosys@rightheadwidth}{600mm}
+\setlength{\infosys@headheight}{165mm}
+\setlength{\infosys@rightcenterheight}{80mm}
+\setlength{\infosys@rightbottomheight}{50mm}
+\fi
+
+\setlength{\infosys@righttopheight}{20mm}
+\setlength{\infosys@headsep}{10mm}
+\setlength{\infosys@bordersep}{10mm}
+
+\RequirePackage{calc}
+
+% headline of the frame
+\setbeamertemplate{headline}{%
+  \leavevmode
+  \vskip\infosys@bordersep
+  \hskip\infosys@bordersep
+  \begin{tikzpicture}
+    % 
+    % draw a rectangle and fill it with two minipages
+    % 
+    \node[draw,rectangle,line width=3pt,inner sep=0pt]{
+      \begin{minipage}[t][\infosys@headheight]{\infosys@headwidth}
+        \centering
+        %
+        % left minipage
+        %
+        \begin{minipage}[t][\infosys@headheight]{\infosys@leftheadwidth}%
+          \vspace{\infosys@headsep}% some vspace is needed for the top-alignment
+          %
+          \begin{minipage}[t][\infosys@headheight-\infosys@headsep]{\infosys@leftheadwidth}
+            \inserttitlegraphic
+          \end{minipage}
+        \end{minipage}  
+        % 
+        % right minipage
+        %
+        \begin{minipage}[t][\infosys@headheight]{\infosys@rightheadwidth}%
+          \vspace{\infosys@headsep}% some vspace is needed for the top-alignment
+          %
+          \begin{minipage}[c][\infosys@righttopheight]{\infosys@rightheadwidth}
+            \centering{\fontsize{36pt}{43pt}\selectfont \insertshorttitle}
+          \end{minipage}
+          % 
+          \begin{minipage}[c][\infosys@rightcenterheight]{\infosys@rightheadwidth}
+            \centering\textbf{\fontsize{66pt}{89pt}\selectfont\inserttitle}
+          \end{minipage}
+          % 
+          \begin{minipage}[c][\infosys@rightbottomheight]{\infosys@rightheadwidth}
+            \centering\fontsize{36pt}{43pt}\selectfont\insertauthor
+          \end{minipage}
+        \end{minipage}
+        %
+      \end{minipage}
+    };
+  \end{tikzpicture}
+  %\hskip\infosys@bordersep
+}
+
+% setup basic bling bling
+\setbeamertemplate{frametitle}{} % no headline of the frame
+\setbeamertemplate{framesubtitle}{} % no subheadline of the frame
+\setbeamertemplate{itemize items}[triangle] % triangle items
+\setbeamertemplate{navigation symbols}{}  % no navigation on a poster
+\setbeamertemplate{bibliography item}[triangle] % no bibliography icons
+
+% use bold+serif fonts for math
+\usefonttheme[onlymath]{serif}
+\boldmath
+
+% setup blocks with some extra spacing
+\setbeamertemplate{block begin}{
+  \begin{beamercolorbox}{block title}%
+    \begin{minipage}[c][2cm]{\linewidth}
+      \centering\textbf{\insertblocktitle}
+    \end{minipage}
+  \end{beamercolorbox}
+  \vspace*{5mm}
+  \begin{beamercolorbox}{block body}%
+}
+%
+\setbeamertemplate{block end}{
+  \end{beamercolorbox}
+  \vspace{2cm}
+}
+
+
+% setup postit
+\setbeamercolor{postit}{fg=black,bg=yellow} 
+\newenvironment{postit}
+{\begin{beamercolorbox}[sep=1em,wd=7cm]{postit}}
+{\end{beamercolorbox}}
+
+% default coloring is infosys grey
+\setbeamercolor{bibliography entry author}{fg=InfosysDarkGrey}
+\setbeamercolor{bibliography entry title}{fg=black}
+\setbeamercolor{bibliography entry journal}{fg=black}
+\setbeamercolor{bibliography entry note}{fg=black}
+
+\usecolortheme{default}
+\setbeamercolor{structure}{fg=InfosysDarkGrey}
+
+% play around with block colors
+\setbeamercolor{block body}{fg=black}
+\setbeamercolor{block title}{fg=white,bg=InfosysDarkGrey}
+
+% basic colors
+\setbeamercolor{alerted text}{fg=TuInfRed}
+\setbeamercolor{example text}{fg=InfosysDarkGrey}
+
+% and we are done
+\mode<all>
+
+
+\endinput
+
+%%% Local Variables:
+%%% mode: latex
+%%% End:

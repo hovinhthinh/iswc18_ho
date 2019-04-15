@@ -1,0 +1,119 @@
+% $Id: TUINFPST.sty 4263 2011-04-09 07:38:00Z tkren $
+%
+% TU Wien - Faculty of Informatics
+% settings for TUINF poster
+%
+% For questions and comments send an email to
+% Thomas Krennwallner <tkren@kr.tuwien.ac.at>
+%
+\ProvidesPackage{TUINFPST}[2011/04/08 v1.1 TU INF Poster style file]
+\typeout{2011/04/08 v1.1 TU INF Poster style file}
+
+%
+% options
+%
+\RequirePackage{xkeyval}
+
+\newif\ifinfosys@grid\infosys@gridfalse
+\newif\ifinfosys@cropmarks\infosys@cropmarksfalse
+\newif\ifinfosys@landscape\infosys@landscapefalse
+
+% display a grid to help align images
+\DeclareOptionX{grid}{\infosys@gridtrue}
+
+% for crop marks, uncomment the following line
+\DeclareOptionX{cropmarks}{\infosys@cropmarkstrue}
+
+% for landscape poster
+\DeclareOptionX{landscape}{\infosys@landscapetrue}
+
+% default: A0 size
+\ifinfosys@landscape
+\gdef\infosys@paperheight{84.1}
+\gdef\infosys@paperwidth{118.9}
+\else
+\gdef\infosys@paperheight{118.9}
+\gdef\infosys@paperwidth{84.1}
+\fi
+
+\DeclareOptionX{height}{\xdef\infosys@paperheight{#1}} 
+\DeclareOptionX{width}{\xdef\infosys@paperwidth{#1}}
+
+% font scale
+\gdef\infosys@scale{1.5}
+\DeclareOptionX{scale}{\xdef\infosys@scale{#1}}
+
+\ProcessOptionsX
+
+%
+% packages
+%
+
+% use Helvetica for \sffamily
+\RequirePackage[T1]{fontenc}
+\RequirePackage[scaled]{helvet}
+\RequirePackage{times}
+
+% load english and ngerman
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[ngerman,english]{babel}
+
+% math packages
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{latexsym}
+
+% setup graphicx
+\RequirePackage{graphicx}
+\graphicspath{{figures/}}
+
+% TikZ ist kein Zeichenprogramm
+\RequirePackage{tikz}
+
+% setup colors
+\RequirePackage{xcolor}
+\selectcolormodel{cmyk}
+
+\definecolor{DbaiDarkGreen}{cmyk}{0,0,0.2,0.4}
+\definecolor{DbaiBrightGreen}{cmyk}{0.22,0.18,0.36,0}
+\definecolor{ForsyteDarkYellow}{cmyk}{0,0.27,0.94,0.28}
+\definecolor{ForsyteBrightYellow}{cmyk}{0,0.27,0.94,0.28}
+\definecolor{KbsDarkBlue}{cmyk}{0.6,0.4,0,0.4}
+\definecolor{KbsBrightBlue}{cmyk}{0.45,0.28,0,0.28}
+\definecolor{InfosysDarkGrey}{gray}{0.4}
+\definecolor{InfosysLightGrey}{gray}{0.6}
+\definecolor{TuWienBlue}{cmyk}{1,0.38,0,0.15}
+\definecolor{TuInfRed}{cmyk}{0,1,1,0}
+
+% 88cm x 123cm is the maximum plotting size for the archlab plotter
+\ifinfosys@landscape
+\PassOptionsToPackage{orientation=landscape}{beamerposter}
+\PassOptionsToPackage{height=88truecm,width=123truecm}{crop}   
+\else
+\PassOptionsToPackage{orientation=portrait}{beamerposter}
+\PassOptionsToPackage{width=88truecm,height=123truecm}{crop}  
+\fi
+
+% load beamerposter, with 1.5 scaled fontsize
+\RequirePackage[size=custom,width=\infosys@paperwidth,height=\infosys@paperheight,scale=\infosys@scale]{beamerposter}
+
+\ifinfosys@cropmarks
+\RequirePackage[cross,center]{crop}
+\fi
+
+\ifinfosys@grid
+\beamertemplategridbackground[30mm]
+\fi
+
+% load the basic infosys theme for the beamer poster
+\ifinfosys@landscape
+\mode<presentation>{\usetheme[landscape]{infosys}}
+\else
+\mode<presentation>{\usetheme{infosys}}
+\fi
+
+\endinput
+
+%%% Local Variables:
+%%% mode: latex
+%%% End:
